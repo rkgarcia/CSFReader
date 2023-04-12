@@ -32,9 +32,9 @@ jobs:
       uses: microsoft/setup-msbuild@v1.3.1
       
     # Calculate version
-    - name: Git Version
-      uses: codacy/git-version@2.4.0
+    - name: Get Versioning Data
       id: version
+      uses: Soumeh/Auto-Versioning@main
 
     # Build the application
     - name: Build the application
@@ -42,7 +42,7 @@ jobs:
     
     # Generate the single binary
     - name: Generate single binary
-      run: dotnet publish CSFReader\CSFReader.csproj -c Release -r win-x64 /p:SelfContained=true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:IncludeNativeLibrariesForSelfExtract=true /p:DebugType=None /p:DebugSymbols=false /p:Version=${{ steps.version.outputs.version }}  -o bin
+      run: dotnet publish CSFReader\CSFReader.csproj -c Release -r win-x64 /p:SelfContained=true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:IncludeNativeLibrariesForSelfExtract=true /p:DebugType=None /p:DebugSymbols=false /p:Version=${{ steps.version.outputs.tag }}  -o bin
 
     # Upload the artifact
     - name: Upload a Build Artifact
