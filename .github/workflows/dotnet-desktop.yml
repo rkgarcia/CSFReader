@@ -2,9 +2,8 @@ name: .NET Core Desktop
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    tags:
+      - '*'
 
 jobs:
 
@@ -21,6 +20,14 @@ jobs:
       with:
         fetch-depth: 0
 
+    # Get the tag
+    - name: Get tag
+      id: tag
+      uses: devops-actions/action-get-tag@v1.0.1
+      with:
+        strip_v: true # Optional: Remove 'v' character from version
+        default: v0.0.0 # Optional: Default version when tag not found
+    
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v3
@@ -30,11 +37,6 @@ jobs:
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.3.1
-      
-    # Calculate version
-    - name: Get Versioning Data
-      id: version
-      uses: Soumeh/Auto-Versioning@main
 
     # Build the application
     - name: Build the application
@@ -42,7 +44,7 @@ jobs:
     
     # Generate the single binary
     - name: Generate single binary
-      run: dotnet publish CSFReader\CSFReader.csproj -c Release -r win-x64 /p:SelfContained=true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:IncludeNativeLibrariesForSelfExtract=true /p:DebugType=None /p:DebugSymbols=false /p:Version=${{ steps.version.outputs.tag }}  -o bin
+      run: dotnet publish CSFReader\CSFReader.csproj -c Release -r win-x64 /p:SelfContained=true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:IncludeNativeLibrariesForSelfExtract=true /p:DebugType=None /p:DebugSymbols=false /p:Version=${{steps.tag.outputs.tag}}  -o bin
 
     # Upload the artifact
     - name: Upload a Build Artifact
