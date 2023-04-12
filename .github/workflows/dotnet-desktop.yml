@@ -54,6 +54,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    needs: build
     steps:
       
       #Download the previous generated binary
