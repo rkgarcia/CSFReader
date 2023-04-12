@@ -29,7 +29,12 @@ jobs:
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v1.3.1
+      
+    # Calculate version
+    - name: Git Version
+      uses: codacy/git-version@2.4.0
+      id: version
 
     # Build the application
     - name: Build the application
@@ -37,7 +42,7 @@ jobs:
     
     # Generate the single binary
     - name: Generate single binary
-      run: dotnet publish CSFReader\CSFReader.csproj -c Release -r win-x64 /p:SelfContained=true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:IncludeNativeLibrariesForSelfExtract=true /p:DebugType=None /p:DebugSymbols=false -o bin
+      run: dotnet publish CSFReader\CSFReader.csproj -c Release -r win-x64 /p:SelfContained=true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:IncludeNativeLibrariesForSelfExtract=true /p:DebugType=None /p:DebugSymbols=false /p:Version=${{ steps.version.outputs.version }}  -o bin
 
     # Upload the artifact
     - name: Upload a Build Artifact
