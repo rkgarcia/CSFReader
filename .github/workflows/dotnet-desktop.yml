@@ -8,9 +8,7 @@ on:
 jobs:
 
   build:
-
     runs-on: windows-latest
-
     env:
       Solution_Name: CSFReader.sln
 
@@ -51,4 +49,23 @@ jobs:
       uses: actions/upload-artifact@v3.1.2
       with:
         name: binary
-        path: bin
+        path: bin\CSFReader.exe
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      
+      #Download the previous generated binary
+      - name: Download a single artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: binary
+
+      - name: Release
+        uses: fnkr/github-action-ghr@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GHR_COMPRESS: xz
+          GHR_PATH: bin/CSFReader.exe
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
